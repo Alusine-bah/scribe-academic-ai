@@ -1,29 +1,14 @@
-import pdf from 'pdf-parse/lib/pdf-parse.js';
-import mammoth from 'mammoth';
-
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 const MAX_CHARS = 24000;
 
-async function extract(file) {
-  const buf = Buffer.from(await file.arrayBuffer());
-  const name = file.name.toLowerCase();
-  if (name.endsWith('.pdf')) return (await pdf(buf)).text;
-  if (name.endsWith('.docx')) return (await mammoth.extractRawText({ buffer: buf })).value;
-  return buf.toString('utf-8');
-}
-
 export async function POST(req) {
   try {
     if (!process.env.GROQ_API_KEY) return Response.json({ error: 'Server is missing GROQ_API_KEY' }, { status: 500 });
-    const form = await req.formData();
-    const persona = form.get('persona') || 'School Administrator';
-    const file = form.get('file');
-    let text = form.get('text') || '';
-    if (file && typeof file !== 'string') text = await extract(file);
-    text = text.trim().slice(0, MAX_CHARS);
-    if (text.length < 30) return Response.json({ error: 'Could not read enough text from this file.' }, { status: 400 });
+    const { text: raw, persona = 'School Administrator' } = await req.json();
+    const text = String(raw || '').trim().slice(0, MAX_CHARS);
+    if (text.length < 30) return Response.json({ error: 'Not enough text to analyse.' }, { status: 400 });
 
     const system = `You are an expert West African academic consultant and systems engineer. The reader is a ${persona}.
 Analyse the institutional document and reply ONLY with JSON in this exact shape:

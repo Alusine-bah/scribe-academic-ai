@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { extractText } from './extract';
 
 const PERSONAS = ['Secondary School Principal', 'University Dean', 'Curriculum Reviewer', 'Classroom Teacher', 'School Administrator / Registrar'];
 const TABS = ['✅ Action Checklist', '🏫 Staff Planner', '📱 WhatsApp Summary'];
@@ -17,21 +18,19 @@ export default function Home() {
     if (!file) return;
     setData(null); setDone({}); setTab(0);
     try {
-      const fd = new FormData();
-      fd.append('persona', persona);
-      if (file.type.startsWith('image/')) {
-        setStatus('📷 Reading the photo (OCR)... this can take a moment');
-        const { createWorker } = await import('tesseract.js');
-        const worker = await createWorker('eng');
-        const { data: { text } } = await worker.recognize(file);
-        await worker.terminate();
-        fd.append('text', text);
-      } else {
-        fd.append('file', file);
-      }
+      if (file.size > 25 * 1024 * 1024) throw new Error('File is too big (max 25 MB).');
+      const text = await extractText(file, setStatus);
+      if (!text || text.trim().length < 30)
+        throw new Error('No readable text found. If this is a scanned PDF, take a photo of the page and upload the photo instead.');
       setStatus('🤖 AI is analysing the document...');
-      const res = await fetch('/api/analyze', { method: 'POST', body: fd });
-      const json = await res.json();
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, persona }),
+      });
+      const raw = await res.text();
+      let json;
+      try { json = JSON.parse(raw); } catch { throw new Error('Server problem (' + res.status + '). Please try a shorter document.'); }
       if (!res.ok) throw new Error(json.error || 'Something went wrong');
       setData(json); setStatus('');
     } catch (e) { setStatus('❌ ' + e.message); }

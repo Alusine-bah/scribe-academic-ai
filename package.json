@@ -1,11 +1,15 @@
 {
   "name": "scribe-academic-ai",
   "private": true,
-  "scripts": { "dev": "next dev", "build": "next build", "start": "next start" },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
   "dependencies": {
     "mammoth": "^1.8.0",
     "next": "^15.0.0",
-    "pdf-parse": "1.1.1",
+    "pdfjs-dist": "^4.10.38",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tesseract.js": "^5.1.1"

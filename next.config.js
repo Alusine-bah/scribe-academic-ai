@@ -1,1 +1,1 @@
-module.exports = { serverExternalPackages: ['pdf-parse', 'mammoth'] };
+module.exports = {};
