@@ -12,7 +12,7 @@ Schools and universities receive long policy documents, ministry circulars, and 
 
 ## What it does
 
-Upload a **PDF, Word file, text file, or a photo of a printed letter**. The app reads it and produces:
+Upload a **PDF, Word file, text file, or a photo of a printed letter**, or click **Try a sample document** to see it working in one click. The app reads the document and produces:
 
 - **Action Checklist**: tick-box tasks in date order, with deadlines.
 - **Staff Planner**: which department or role must do what.
