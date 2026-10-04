@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { extractText } from './extract';
 import { SAMPLE_TEXT } from './sample';
+import { downloadPdf } from './exportPdf';
 
 const PERSONAS = ['Secondary School Principal', 'University Dean', 'Curriculum Reviewer', 'Classroom Teacher', 'School Administrator / Registrar'];
 const TABS = ['✅ Action Checklist', '🏫 Staff Planner', '📱 WhatsApp Summary'];
@@ -74,6 +75,7 @@ export default function Home() {
 
       {data && (<>
         <div className="card"><b>Summary</b><p>{data.summary}</p></div>
+        <button className="dl" onClick={() => downloadPdf(data, persona)}>⬇️ Download as PDF</button>
         <div className="tabs">
           {TABS.map((t, i) => <button key={t} className={tab === i ? 'act' : ''} onClick={() => setTab(i)}>{t}</button>)}
         </div>
