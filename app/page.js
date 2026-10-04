@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { extractText } from './extract';
+import { SAMPLE_TEXT } from './sample';
 
 const PERSONAS = ['Secondary School Principal', 'University Dean', 'Curriculum Reviewer', 'Classroom Teacher', 'School Administrator / Registrar'];
 const TABS = ['✅ Action Checklist', '🏫 Staff Planner', '📱 WhatsApp Summary'];
@@ -14,12 +15,10 @@ export default function Home() {
   const [drag, setDrag] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  async function handle(file) {
-    if (!file) return;
+  async function run(getText) {
     setData(null); setDone({}); setTab(0);
     try {
-      if (file.size > 25 * 1024 * 1024) throw new Error('File is too big (max 25 MB).');
-      const text = await extractText(file, setStatus);
+      const text = await getText();
       if (!text || text.trim().length < 30)
         throw new Error('No readable text found. If this is a scanned PDF, take a photo of the page and upload the photo instead.');
       setStatus('🤖 AI is analysing the document...');
@@ -35,6 +34,16 @@ export default function Home() {
       setData(json); setStatus('');
     } catch (e) { setStatus('❌ ' + e.message); }
   }
+
+  function handle(file) {
+    if (!file) return;
+    run(async () => {
+      if (file.size > 25 * 1024 * 1024) throw new Error('File is too big (max 25 MB).');
+      return extractText(file, setStatus);
+    });
+  }
+
+  function trySample() { run(async () => SAMPLE_TEXT); }
 
   async function copy() {
     await navigator.clipboard.writeText(data.whatsapp);
@@ -58,6 +67,8 @@ export default function Home() {
         Drag & drop here, or tap to choose a file
         <input id="f" type="file" hidden accept=".pdf,.docx,.txt,image/*" onChange={(e) => handle(e.target.files[0])} />
       </div>
+
+      <button className="sample" onClick={trySample}>✨ Try a sample document (one click)</button>
 
       {status && <div className="status">{status}</div>}
 
