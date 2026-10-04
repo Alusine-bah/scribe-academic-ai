@@ -17,6 +17,7 @@ Upload a **PDF, Word file, text file, or a photo of a printed letter**, or click
 - **Action Checklist**: tick-box tasks in date order, with deadlines.
 - **Staff Planner**: which department or role must do what.
 - **WhatsApp Summary**: a short, emoji-bulleted message you can copy straight into a staff WhatsApp or Telegram group.
+- **PDF export**: download the full action plan as a clean PDF.
 
 You can also choose a persona (Principal, Dean, Curriculum Reviewer, Teacher, Registrar) so the output fits the reader.
 
@@ -62,7 +63,6 @@ Open http://localhost:3000.
 ## Roadmap
 
 - Support for French and other languages
-- Export the checklist to PDF
 - Save and share results
 
 ## Author
